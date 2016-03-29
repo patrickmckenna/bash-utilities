@@ -17,3 +17,7 @@ The script currently assumes that:
 
 ##### [`print-git-branch.sh`](/print-git-branch.sh)
 Prints the currently checked out branch. Useful for, say, [customizing your prompt](https://github.com/patrickmckenna/dotfiles/blob/master/bashrc).
+
+
+##### [`git-show-new.sh`](/git-show-new.sh)
+Prints a list of the commits added by the last change to the specified branch (or current branch if no arg is given). For instance, you could use this to see what new commits are on `master` after your latest `fetch`.
