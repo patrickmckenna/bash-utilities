@@ -2,11 +2,11 @@
 
 set -e
 
-if [ $# -ge 1 ]; then
+if [ $# -eq 1 ]; then
   branch="$1"
-  shift
 else
-  branch=$(cat .git/HEAD | sed 's/ref:\ refs\/heads\///')
+  branch="HEAD"
 fi
 
-git log "$branch"@{1}.."$branch"@{0} "$@"
+printf "\n%s%s\n\n" $(git rev-list $branch@{1}.. | wc -l) " commits were added by your last update to $branch:"
+git --no-pager log "$branch"@{1}.."$branch"@{0} --oneline
