@@ -16,18 +16,12 @@ Options:
 test_rev() {
   local rev="$1"
   local command="$2"
-  git checkout $rev 2>/dev/null && eval "$command"
+  git checkout -q "$rev" && eval "$command"
   local retcode=$?
   if [ $retcode -ne 0 ]
   then
-    echo
-    echo "*******************************************************************************"
-    echo "FAILED ON COMMIT $rev"
-    echo
-    git --no-pager log -1 --decorate $rev
-    echo "*******************************************************************************"
-    echo
-    echo "FAILURE!"
+    printf "\n%s\n" "$command FAILED ON:"
+    git --no-pager log -1 --decorate "$rev"
     return $retcode
   fi
 }
@@ -37,7 +31,7 @@ test_rev() {
 
 require_clean_work_tree "git-test-range"
 
-keep_going=false
+keep_going=
 if [ $1 == "-k" ] || [ $1 == "--keep-going" ]
 then
     keep_going=true
@@ -74,7 +68,7 @@ head=$(git symbolic-ref HEAD 2>/dev/null || git rev-parse HEAD)
 fail_count=0
 for rev in $(git rev-list --reverse $range)
 do
-    test_rev $rev
+    test_rev $rev "$command"
 
     retcode=$?
     if [ $retcode -eq 0 ]
@@ -82,12 +76,12 @@ do
         continue
     fi
 
-    # this commit has failed the test
     if [ $keep_going ]
     then
         fail_count=$((fail_count + 1))
         continue
     else
+        git checkout -f ${head#refs/heads/} &>/dev/null
         exit $retcode
     fi
 done
