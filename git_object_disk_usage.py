@@ -33,7 +33,7 @@ import requests
 
 peff_gist_url = "https://gist.githubusercontent.com/peff/522bf9fb633e9fa5a04e10a127dfec5a/raw/f1865bf03e40611b57a12f15fcc3e9412c18b081/git-du"
 peff_gist_name = peff_gist_url.rpartition("/")[2]
-give_up = "couldn't find @peff's magic, so I quit!"
+give_up = "Couldn't {failure} @peff's magic, so I quit!"
 
 if not os.path.isfile(peff_gist_name):
     try:
@@ -42,7 +42,7 @@ if not os.path.isfile(peff_gist_name):
         response.raise_for_status()
     except requests.exceptions.RequestException as request_exception:
         print(request_exception)
-        sys.exit(give_up)
+        sys.exit(give_up.format(failure="find"))
     else:
         # assume (stupidly?) that the write will succeed since there's no name clash
         with open(peff_gist_name, "w") as file:
@@ -57,7 +57,7 @@ try:
                              universal_newlines=True)
 except subprocess.CalledProcessError as process_exception:
     print(process_exception)
-    sys.exit(give_up)
+    sys.exit(give_up.format(failure="run"))
 
 
 # if it ran, get the output of the script
